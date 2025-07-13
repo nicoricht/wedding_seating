@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Sitzplatz finden</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+    input { padding: 0.5rem; width: 250px; }
+    button { padding: 0.5rem 1rem; margin-left: 0.5rem; }
+    #result { margin-top: 1.5rem; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Willkommen zu unserer Hochzeit</h1>
+  <h1>Wir freuen uns, den Tag mit dir zu verbringen</h1>
+  <p>Gib deinen Namen ein, um deinen Sitzplatz zu sehen:</p>
+  <input type="text" id="nameInput" placeholder="Vorname Nachname" />
+  <button onclick="findSeat()">Suchen</button>
+  <div id="result"></div>
+  <script src="/script.js"></script>
+</body>
+</html>
