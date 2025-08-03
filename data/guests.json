@@ -1,5 +1,5 @@
 {
-  "Katherina Richter": "Tischnummer: 2",
+  "Kathi Richter": "Tischnummer: 2",
   "Nico Richter": "Tischnummer: 2",
   "Jana Schunkert": "Tischnummer: 2",
   "Marc Traichel": "Tischnummer: 2",
@@ -40,9 +40,9 @@
   "Hendrik Schmeink": "Tischnummer: 9",
   "Esther Berger": "Tischnummer: 9",
   "Julian Thiele": "Tischnummer: 11",
-  "Dennis": "Tischnummer: 11",
+  "Dennis Talat": "Tischnummer: 11",
   "Mattia Wiegrink": "Tischnummer: 6",
-  "Caro": "Tischnummer: 6",
+  "Caro Telaar": "Tischnummer: 6",
   "Kim Tepaße": "Tischnummer: 5",
   "Felix Tenkamp": "Tischnummer: 5",
   "Theresa Peters": "Tischnummer: 1",
@@ -60,7 +60,7 @@
   "Paul Jansen": "Tischnummer: 12",
   "Florentine Jansen": "Tischnummer: 12",
   "Lea-Sophie te Uhle": "Tischnummer: 12",
-  "Alex": "Tischnummer: 12",
+  "Alex Tetiet": "Tischnummer: 12",
   "Greta Boeck": "Tischnummer: 10",
   "Tom Möllenbeck": "Tischnummer: 10",
   "Charlotte Müller": "Tischnummer: 13",
@@ -107,6 +107,7 @@
   "Petra Niemijer": "Tischnummer: 13",
   "Rita Ebbing": "Tischnummer: 13",
   "Andrea Schmitz": "Tischnummer: 1",
+  "Dennis Malyska": "Tischnummer: ",
 
   "dependencies": {
     "express": "^5.1.0"
