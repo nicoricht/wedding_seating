@@ -1,89 +1,106 @@
-<script>
+function writeWindow(w, msg) {
+  const html = `<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sitzplatz</title>
+<style>
+  html,body{height:100%;margin:0}
+  body{display:grid;place-items:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .card{max-width:min(90vw,560px);padding:2rem;border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.15)}
+  .ok{background:#f5f5f5;color:#111}
+  h1{margin:0 0 .75rem;font-size:clamp(1.4rem,4vw,2rem)}
+  p{margin:0;font-size:clamp(1rem,3vw,1.2rem)}
+  button{margin-top:1rem;padding:.8rem 1.2rem;border-radius:12px;border:0;font-weight:600;cursor:pointer}
+</style></head>
+<body>
+  <div class="card ok">
+    <h1>Sitzplatz</h1>
+    <p>${msg}</p>
+    <button onclick="window.close()">Fenster schließen</button>
+  </div>
+</body></html>`;
+  w.document.open(); w.document.write(html); w.document.close();
+}
 
-function stripDiacritics(str){
-return str.normalize('NFD').replace(/\p{Diacritic}/gu, '')
+// Meldung auf Basis der API-Antwort bauen
+function seatMessage(data, rawName) {
+  if (!data || !data.seat) {
+    return 'Leider wurde kein Sitzplatz gefunden.';
+  }
+  // data.seat kann z. B. eine Tischnummer oder ein Objekt sein
+  const table = (typeof data.seat === 'object')
+    ? (data.seat.table ?? data.seat.tisch ?? data.seat.Table ?? data.seat.Tisch ?? data.seat)
+    : data.seat;
+
+  // Optional: den gematchten Namen zeigen (falls vom Server geliefert)
+  const who = data.matchedName ? ` (${data.matchedName})` : '';
+  return `Dein Sitzplatz findest du an Tisch ${table}.${who}`;
 }
-function normalize(name){
-if(!name) return '';
-const trimmed = name.trim().replace(/\s+/g,' ');
-const lowered = trimmed.toLowerCase();
-const ascii = stripDiacritics(lowered);
-return {compact: ascii.replace(/\s+/g,''), withSpace: ascii};
+
+async function querySeat(name) {
+  const url = `/api/seat?name=${encodeURIComponent(name)}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('API-Fehler');
+  return res.json();
 }
-function levenshtein(a, b){
-const m = a.length, n = b.length;
-const dp = Array.from({length:m+1}, ()=>Array(n+1).fill(0));
-for(let i=0;i<=m;i++) dp[i][0]=i;
-for(let j=0;j<=n;j++) dp[0][j]=j;
-for(let i=1;i<=m;i++){
-for(let j=1;j<=n;j++){
-const cost = a[i-1]===b[j-1]?0:1;
-dp[i][j] = Math.min(
-dp[i-1][j]+1,
-dp[i][j-1]+1,
-dp[i-1][j-1]+cost
-);
+
+function normalizeInput(value) {
+  // Trim & mehrere Leerzeichen zu einem
+  return value.trim().replace(/\s+/g, ' ');
 }
-}
-return dp[m][n];
-}
-function bestFuzzyMatch(query){
-const keys = Object.keys(SEATING);
-let best = {key:null, dist:Infinity};
-for(const k of keys){
-const d = levenshtein(query, k);
-if(d < best.dist) best = {key:k, dist:d};
-}
-return best;
-}
-const $result = document.getElementById('result');
-const $hint = document.getElementById('hint');
-function renderFound(nameDisplay, info){
-$result.textContent = `${nameDisplay}: ${info.table} – ${info.seat}`;
-$hint.textContent = info.group ? `Gruppe: ${info.group}` : '';
-}
-function renderNotFound(input){
-$result.textContent = 'Leider nicht gefunden.';
-$hint.textContent = input ? `Prüfe Schreibweise (Vorname Nachname).` : '';
-}
-function findSeatByName(raw){
-const norm = normalize(raw);
-if(!norm.compact) return null;
-if(SEATING[norm.compact]) return {key:norm.compact, alias:false};
-const aliasKey = ALIASES[norm.withSpace];
-if(aliasKey && SEATING[aliasKey]) return {key:aliasKey, alias:true};
-const {key, dist} = bestFuzzyMatch(norm.compact);
-if(key && dist > 0 && dist <= 2) return {key, alias:true};
-return null;
-}
-const form = document.getElementById('searchForm');
-form.addEventListener('submit', (e)=>{
-e.preventDefault();
-const input = document.getElementById('nameInput');
-const raw = input.value;
-const hit = findSeatByName(raw);
-if(hit){
-renderFound(raw.trim(), SEATING[hit.key]);
-} else {
-renderNotFound(raw);
-}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('nameInput');
+  const scanBtn = document.getElementById('scanBtn'); // optional vorhanden
+
+  // Submit-Handler
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Popup SOFORT öffnen (User-Geste), damit kein Popup-Blocker greift
+    const popup = window.open('', 'sitzplatz', 'width=520,height=360,noopener');
+    if (!popup) {
+      alert('Bitte Pop-ups im Browser erlauben.');
+      return;
+    }
+    writeWindow(popup, 'Lade deinen Sitzplatz …');
+
+    const raw = normalizeInput(input.value);
+    if (!raw) {
+      writeWindow(popup, 'Bitte einen Vor- und Nachnamen eingeben.');
+      return;
+    }
+
+    try {
+      const data = await querySeat(raw);
+      writeWindow(popup, seatMessage(data, raw));
+    } catch (err) {
+      console.error(err);
+      writeWindow(popup, 'Fehler beim Abrufen der Daten. Bitte später erneut versuchen.');
+    }
+  });
+
+  // Enter im Input -> Submit
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  // Optionaler Scan-Button (Platzhalter)
+  if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
+      alert('Scan-Funktion (QR/Barcode) ist als Platzhalter vorhanden.');
+    });
+  }
+
+  // Optional: ?name=Vorname%20Nachname per URL vorbelegen und auto-suchen
+  const params = new URLSearchParams(window.location.search);
+  const prefill = params.get('name');
+  if (prefill) {
+    input.value = prefill;
+    form.requestSubmit();
+  }
 });
-document.getElementById('nameInput').addEventListener('keydown', (e)=>{
-if(e.key === 'Enter'){
-e.preventDefault();
-form.requestSubmit();
-}
-});
-const params = new URLSearchParams(location.search);
-const prefill = params.get('name');
-if(prefill){
-const input = document.getElementById('nameInput');
-input.value = prefill;
-form.requestSubmit();
-}
-document.getElementById('scanBtn').addEventListener('click', ()=>{
-alert('Scan-Funktion ist als Platzhalter enthalten. Hier könnte ein QR-Reader integriert werden.');
-});
-</script>
-</body>
-</html>
