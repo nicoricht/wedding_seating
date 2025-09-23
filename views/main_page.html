@@ -1,10 +1,11 @@
+<!--
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <title>Sitzplatz finden</title>
   <style>
-    body { font-family: Arial; color: white; text-align: center; padding: 2rem; background-image: url("/IMG_5079.jpg"); background-size: cover; background-position: : center; background-repeat: no-repeat;}
+    body { font-family: Arial; color: white; text-align: center; padding: 2rem; background-image: url("/IMG_5080.jpg"); background-size: cover; background-position: : center; background-repeat: no-repeat;}
     input { padding: 1rem; width: 300px; }
     button { padding: 1rem 2rem; margin-left: 0.5rem; }
     #result { margin-top: 1.5rem; font-size: 3.0rem; }
@@ -20,3 +21,77 @@
   <script src="/script.js"></script>
 </body>
 </html>
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sitzplatz finden</title>
+<style>
+:root{
+--bg-blur: 6px;
+--overlay: rgba(0,0,0,0.45);
+--radius: 18px;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%; width:100%}
+body{
+font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+color: #fff;
+display:flex; flex-direction:column;
+justify-content:flex-end; /* Inhalte ins untere Drittel */
+text-align:center;
+background-image: url('/IMG_5080.jpg');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+}
+.wrap{
+width:100%;
+padding: clamp(1rem, 3vw, 2.5rem);
+border-radius: var(--radius);
+backdrop-filter: blur(var(--bg-blur));
+-webkit-backdrop-filter: blur(var(--bg-blur));
+background: var(--overlay);
+box-shadow: 0 20px 80px rgba(0,0,0,.35);
+}
+h1{ margin:.15em 0; font-weight:800; line-height:1.1; }
+h1:first-of-type{ font-size: clamp(1.6rem, 6vw, 2.8rem) }
+h1:last-of-type{ font-size: clamp(1.2rem, 4.5vw, 2rem); font-weight:600; opacity:.95 }
+p{ opacity:.95; font-size: clamp(1rem, 3.5vw, 1.2rem); margin-top:.75rem }
+.search{
+margin-top: 1rem;
+display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap
+}
+label{position:absolute; left:-9999px}
+input[type="text"]{
+padding: 1rem 1.1rem; width: min(480px, 80vw); border-radius: 14px; border: 0;
+outline: none; font-size: clamp(1rem, 3vw, 1.2rem);
+}
+button{ padding: 1rem 1.25rem; border-radius: 14px; border:0; font-weight:700; font-size:clamp(1rem, 3vw, 1.2rem); cursor:pointer }
+button.primary{ background:#ffffff; color:#111 }
+button.secondary{ background:transparent; color:#fff; border:2px solid rgba(255,255,255,.7) }
+#result{ margin-top: 1.25rem; font-size: clamp(1.4rem, 5vw, 2.6rem); font-weight:800 }
+#hint{ margin-top:.25rem; font-size:clamp(.85rem,2vw,1rem); opacity:.9 }
+.small{ font-size:.9rem; opacity:.9 }
+</style>
+</head>
+<body>
+<main class="wrap" role="main">
+<h1>Willkommen zu unserer Hochzeit</h1>
+<h1>Wir freuen uns, den Tag mit dir zu verbringen.</h1>
+
+<p>Gib bitte deinen <strong>Vor- und Nachnamen</strong> ein, um deinen Sitzplatz zu sehen:</p>
+
+<form class="search" id="searchForm" autocomplete="off">
+<label for="nameInput">Vorname Nachname</label>
+<input type="text" id="nameInput" name="name" placeholder="Vorname Nachname" inputmode="text" />
+<button type="submit" class="primary">Suchen</button>
+<button type="button" class="secondary" id="scanBtn" title="QR/Name aus Kamerabild (optional, beta)">Scan</button>
+</form>
+
+<div id="result" aria-live="polite"></div>
+<div id="hint" class="small"></div>
+<p class="small">Tipp: Du kannst die URL auch mit <code>?name=Vorname%20Nachname</code> aufrufen.</p>
+</main>
