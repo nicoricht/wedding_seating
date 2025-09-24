@@ -55,16 +55,21 @@ button.secondary{ background:transparent; color:#fff; border:2px solid rgba(255,
 </head>
 <body>
 <main class="wrap" role="main">
-<h1>Willkommen zu unserer Hochzeit</h1>
-<h1>Wir freuen uns, den Tag mit dir zu verbringen.</h1>
+  <h1>Willkommen zu unserer Hochzeit</h1>
+  <h1>Wir freuen uns, den Tag mit dir zu verbringen.</h1>
 
-<p>Gib bitte deinen <strong>Vor- und Nachnamen</strong> ein, um deinen Sitzplatz zu sehen:</p>
+  <p>Gib bitte deinen <strong>Vor- und Nachnamen</strong> ein, um deinen Sitzplatz zu sehen:</p>
 
-<form class="search" id="searchForm" autocomplete="off">
-<label for="nameInput">Vorname Nachname</label>
-<input type="text" id="nameInput" name="name" placeholder="Vorname Nachname" inputmode="text" />
-<button type="submit" class="primary">Suchen</button>
-</form>
+  <form class="search" id="searchForm" autocomplete="off">
+    <label for="nameInput">Vorname Nachname</label>
+    <input type="text" id="nameInput" name="name" placeholder="Vorname Nachname" inputmode="text" />
+    <button type="submit" class="primary">Suchen</button>
+  </form>
 
-<div id="result" aria-live="polite"></div>
+  <div id="result" aria-live="polite"></div>
 </main>
+
+<!-- Hier das Script eingebunden -->
+<script src="/script.js" defer></script>
+</body>
+</html>
